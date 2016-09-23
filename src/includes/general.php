@@ -15,7 +15,8 @@ require_once dirname(__FILE__) . '/inject.php';
  * @throws Exception
  * @return $customerid : new/updated customerid at Acumulus
  */
-function updateCustomer($vars, $clientid, $customerid = null) {
+function updateCustomer($vars, $clientid, $customerid = null)
+{
     global $whmcs;
 
     $whmcs->load_function('invoice');
@@ -51,7 +52,7 @@ function updateCustomer($vars, $clientid, $customerid = null) {
         $api->setParam('contact/contactlocationcode', 3);
     }
 
-	$taxData = getTaxRate(1, $clientQuery['state'], $clientQuery['country']);
+    $taxData = getTaxRate(1, $clientQuery['state'], $clientQuery['country']);
 
     $api->setParams(array(
         'contact' => array(
@@ -111,7 +112,8 @@ function updateCustomer($vars, $clientid, $customerid = null) {
  * Returns the option vars of Acumulus for in our Hooks.
  * @return array $vars : Acumulus option vars
  */
-function getAddonVars() {
+function getAddonVars()
+{
     $vars = array();
 
     $addonQuery = mysql_query('SELECT setting, value FROM tbladdonmodules WHERE module = "acumulus"');
@@ -132,7 +134,8 @@ function getAddonVars() {
  * @param $country : Country to test
  * @return boolean $result : Result of the test
  */
-function inEurope($country) {
+function inEurope($country)
+{
     require $_SERVER['DOCUMENT_ROOT'] . '/includes/countries.php';
 
     return isset($countries[strtoupper($country)]);

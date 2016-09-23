@@ -1,6 +1,7 @@
 <?php
 
-class api {
+class api
+{
 
     private $url;
 
@@ -19,7 +20,8 @@ class api {
     private $warnings;
     private $response;
 
-    function __construct($contractId, $username, $password, $url = 'https://api.sielsystems.nl/acumulus/stable/') {
+    function __construct($contractId, $username, $password, $url = 'https://api.sielsystems.nl/acumulus/stable/')
+    {
         $this->url = $url;
 
         $this->contractId = $contractId;
@@ -31,7 +33,8 @@ class api {
      * Executes the API request and stores the response.
      * @return int status : status response of API
      */
-    public function execute() {
+    public function execute()
+    {
         $this->setParams(array(
             'format' => 'json',
             'contract' => array(
@@ -43,10 +46,10 @@ class api {
 
         if ($this->debug) {
             $this->setParams(array(
-               'contract' => array(
-                   'emailonerror' => $this->debugEmail,
-                   'emailonwarning' => $this->debugEmail
-               )
+                'contract' => array(
+                    'emailonerror' => $this->debugEmail,
+                    'emailonwarning' => $this->debugEmail
+                )
             ));
         }
 
@@ -92,7 +95,8 @@ class api {
      * Returns the response array
      * @return array $response : array of responses
      */
-    public function getResponse() {
+    public function getResponse()
+    {
         return $this->response;
     }
 
@@ -100,7 +104,8 @@ class api {
      * Checks if there are any errors
      * @return bool $hasErrors : if there are errors
      */
-    public function hasErrors() {
+    public function hasErrors()
+    {
         return ((count($this->errors) == 0) ? false : true);
     }
 
@@ -108,7 +113,8 @@ class api {
      * Returns the array with errors, when there are errors.
      * @return array $errors : array of errors
      */
-    public function getErrors() {
+    public function getErrors()
+    {
         return $this->errors;
     }
 
@@ -116,7 +122,8 @@ class api {
      * Checks if there are any warnings
      * @return bool $hasWarnings : if there are warnings
      */
-    public function hasWarnings() {
+    public function hasWarnings()
+    {
         return ((count($this->warnings) == 0) ? false : true);
     }
 
@@ -124,7 +131,8 @@ class api {
      * Returns the array with warnings, when there are warnings.
      * @return array : array of warnings
      */
-    public function getWarnings() {
+    public function getWarnings()
+    {
         return $this->warnings;
     }
 
@@ -134,7 +142,8 @@ class api {
      * @param string $value : Value of param
      * @return self $this : for stack
      */
-    public function setParam($key, $value) {
+    public function setParam($key, $value)
+    {
         $key = explode('/', $key);
         $param = array();
 
@@ -144,7 +153,7 @@ class api {
             $param = $tmp;
         }
 
-        $this->params =  array_replace_recursive($this->params, $param);
+        $this->params = array_replace_recursive($this->params, $param);
 
         return $this;
     }
@@ -155,9 +164,10 @@ class api {
      * @param bool $merge : if it's being merged with the existing params
      * @return self $this : for stack
      */
-    public function setParams($params, $merge = true) {
+    public function setParams($params, $merge = true)
+    {
         if ($merge) {
-            $this->params =  array_replace_recursive($this->params, $params);
+            $this->params = array_replace_recursive($this->params, $params);
         } else {
             $this->params = $params;
         }
@@ -170,7 +180,8 @@ class api {
      * @param $action :
      * @return self $this : for stack
      */
-    public function setAction($action) {
+    public function setAction($action)
+    {
         $this->action = $action;
 
         return $this;
@@ -180,7 +191,8 @@ class api {
      * Returns the action which will being used in the API call
      * @return string $action
      */
-    public function getAction() {
+    public function getAction()
+    {
         return $this->action;
     }
 
@@ -189,7 +201,8 @@ class api {
      * @param $category :
      * @return self $this : for stack
      */
-    public function setCategory($category) {
+    public function setCategory($category)
+    {
         $this->category = $category;
 
         return $this;
@@ -199,7 +212,8 @@ class api {
      * Returns the category which will being used in the API call
      * @return string $category
      */
-    public function getCategory() {
+    public function getCategory()
+    {
         return $this->category;
     }
 
@@ -207,7 +221,8 @@ class api {
      * Returns the parameters which will being used in the API call so far
      * @return array $params
      */
-    public function getParams() {
+    public function getParams()
+    {
         return $this->params;
     }
 
@@ -216,7 +231,8 @@ class api {
      * @param string $email : E-mail for debug e-mails.
      * @return self $this : for stack
      */
-    public function enableDebug($email) {
+    public function enableDebug($email)
+    {
         $this->debug = true;
         $this->debugEmail = $email;
 
@@ -228,7 +244,8 @@ class api {
      * @param string $contractId : Contract ID to set
      * @return self $this : for stack
      */
-    public function setContractId($contractId) {
+    public function setContractId($contractId)
+    {
         $this->contractId = $contractId;
 
         return $this;
@@ -239,7 +256,8 @@ class api {
      * @param string $username : Username to set
      * @return self $this : for stack
      */
-    public function setUsername($username) {
+    public function setUsername($username)
+    {
         $this->username = $username;
 
         return $this;
@@ -250,7 +268,8 @@ class api {
      * @param string $password : Password to set
      * @return self $this : for stack
      */
-    public function setPassword($password) {
+    public function setPassword($password)
+    {
         $this->password = $password;
 
         return $this;
@@ -261,7 +280,8 @@ class api {
      * @param string $url : URL to set
      * @return self $this : for stack
      */
-    public function setUrl($url) {
+    public function setUrl($url)
+    {
         $this->url = $url;
 
         return $this;
@@ -272,7 +292,8 @@ class api {
      * @param SimpleXMLElement $object
      * @param array $data
      */
-    private function _arrayToXml(SimpleXMLElement $object, array $data) {
+    private function _arrayToXml(SimpleXMLElement $object, array $data)
+    {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 $explode = explode('_', $key);

@@ -6,7 +6,8 @@ if (!defined('WHMCS')) {
 
 require_once dirname(__FILE__) . '/includes/general.php';
 
-function acumulus_config() {
+function acumulus_config()
+{
     $vars = getAddonVars();
 
     $invoiceTemplateFields = '';
@@ -63,12 +64,12 @@ function acumulus_config() {
     }
 
     $configarray = array(
-        'name'        => 'Acumulus',
+        'name' => 'Acumulus',
         'description' => 'A module which connects WHMCS with Acumulus.',
-        'version'     => '1.0',
-        'author'      => '<a href="http://devapp.nl/">Dev App</a>',
-        'language'    => 'dutch',
-        'fields'      => array(
+        'version' => '1.0',
+        'author' => '<a href="http://devapp.nl/">Dev App</a>',
+        'language' => 'dutch',
+        'fields' => array(
             'code' => array(
                 'FriendlyName' => 'Contractcode',
                 'Type' => 'text',
@@ -128,7 +129,8 @@ function acumulus_config() {
     return $configarray;
 }
 
-function acumulus_output($vars) {
+function acumulus_output($vars)
+{
     if (isset($_GET['sync'])) {
         if (acumulus_sync($vars)) {
             return;
@@ -151,52 +153,56 @@ function acumulus_output($vars) {
         <tr>
             <?php
             function invoice($entry) {
-                ?>
-                <tr>
-                    <td><input type="checkbox" name="selectedRequests[]" value="<?php echo $entry['entryid']; ?>" class="checkall"></td>
-                    <td><?php echo $entry['issuedate']; ?></td>
-                    <td><?php echo $entry['contactid']; ?> - <?php echo $entry['contactname']; ?></td>
-                    <td><?php echo $entry['accountnumber']; ?></td>
-                    <td><?php echo $entry['amount']; ?></td>
-                    <td><a href="https://www.sielsystems.nl/acumulus/editboeking.php?boeking_ID=<?php echo $entry['entryid']; ?>" onclick="javascript:void window.open('https://www.sielsystems.nl/acumulus/editboeking.php?boeking_ID=<?php echo $entry['entryid']; ?>','boeking wijzigen','width=820,height=700,toolbar=0,menubar=0,location=0,status=1,scrollbars=1,resizable=1,left=0,top=0');return false;">Bekijk</a></td>
-                </tr>
-                <?php
-            }
+            ?>
+        <tr>
+            <td><input type="checkbox" name="selectedRequests[]" value="<?php echo $entry['entryid']; ?>"
+                       class="checkall"></td>
+            <td><?php echo $entry['issuedate']; ?></td>
+            <td><?php echo $entry['contactid']; ?> - <?php echo $entry['contactname']; ?></td>
+            <td><?php echo $entry['accountnumber']; ?></td>
+            <td><?php echo $entry['amount']; ?></td>
+            <td>
+                <a href="https://www.sielsystems.nl/acumulus/editboeking.php?boeking_ID=<?php echo $entry['entryid']; ?>"
+                   onclick="javascript:void window.open('https://www.sielsystems.nl/acumulus/editboeking.php?boeking_ID=<?php echo $entry['entryid']; ?>','boeking wijzigen','width=820,height=700,toolbar=0,menubar=0,location=0,status=1,scrollbars=1,resizable=1,left=0,top=0');return false;">Bekijk</a>
+            </td>
+        </tr>
+        <?php
+        }
 
-            $api = new api($vars['code'], $vars['username'], $vars['password']);
-            $api->setCategory('reports')->setAction('report_unpaid_creditors');
-            $api->execute();
-            $response = $api->getResponse();
+        $api = new api($vars['code'], $vars['username'], $vars['password']);
+        $api->setCategory('reports')->setAction('report_unpaid_creditors');
+        $api->execute();
+        $response = $api->getResponse();
 
-            if ($api->hasErrors()) {
-                ?>
-                <td colspan="6" align="middle">
-                    <strong>Error(s) on API</strong><br/>
-                    <?php
-                     foreach ($api->getErrors() as $error) {
-                        echo $error['code'] . ' | ' . $error['message'] . '<br/>';
-                     }
-                     ?>
-                </td>
+        if ($api->hasErrors()) {
+            ?>
+            <td colspan="6" align="middle">
+                <strong>Error(s) on API</strong><br/>
                 <?php
+                foreach ($api->getErrors() as $error) {
+                    echo $error['code'] . ' | ' . $error['message'] . '<br/>';
+                }
+                ?>
+            </td>
+            <?php
+        } else {
+            if (isset($response['unpaidcreditorinvoices']['entry'][0])) {
+                foreach ($response['unpaidcreditorinvoices']['entry'] as $entry) {
+                    invoice($entry);
+                }
             } else {
-                if (isset($response['unpaidcreditorinvoices']['entry'][0])) {
-                    foreach ($response['unpaidcreditorinvoices']['entry'] as $entry) {
-                        invoice($entry);
-                    }
+                if (isset($response['unpaidcreditorinvoices']['entry'])) {
+                    invoice($response['unpaidcreditorinvoices']['entry']);
                 } else {
-                    if (isset($response['unpaidcreditorinvoices']['entry'])) {
-                        invoice($response['unpaidcreditorinvoices']['entry']);
-                    } else {
-                        ?>
-                        <td colspan="6" align="middle">
-                            Geen openstaande facturen
-                        </td>
-                        <?php
-                    }
+                    ?>
+                    <td colspan="6" align="middle">
+                        Geen openstaande facturen
+                    </td>
+                    <?php
                 }
             }
-            ?>
+        }
+        ?>
         </tr>
     </table><br/><br/>
 
@@ -209,7 +215,7 @@ function acumulus_output($vars) {
     ?>
 
     <form action="" method="POST">
-       <input type="submit" name="sync_vat" value="Synchroniseer VAT"/>
+        <input type="submit" name="sync_vat" value="Synchroniseer VAT"/>
     </form>
 
     <?php
@@ -225,7 +231,8 @@ function acumulus_output($vars) {
     }
 }
 
-function acumulus_sync_vat($vars) {
+function acumulus_sync_vat($vars)
+{
     $taxQuery = select_query('tbltax');
 
     while ($taxFetch = mysql_fetch_assoc($taxQuery)) {
@@ -236,7 +243,7 @@ function acumulus_sync_vat($vars) {
 
         $response = $api->getResponse();
 
-        foreach($response['vatinfo']['vat'] as $vat) {
+        foreach ($response['vatinfo']['vat'] as $vat) {
             if ($vat['vattype'] == 'normal') {
                 update_query('tbltax', array('taxrate' => $vat['vatrate']), array('id' => $taxFetch['id']));
             }
@@ -244,7 +251,8 @@ function acumulus_sync_vat($vars) {
     }
 }
 
-function acumulus_sync($vars) {
+function acumulus_sync($vars)
+{
     if (isset($vars['hide_sync']) && $vars['hide_sync'] == 'on') {
         return false;
     }
@@ -271,8 +279,8 @@ function acumulus_sync($vars) {
     </table>
 
     <script>
-        $(function() {
-            $('.invoices  tr[data-id]').each(function() {
+        $(function () {
+            $('.invoices  tr[data-id]').each(function () {
                 console.log($(this).data('id'));
             });
         });

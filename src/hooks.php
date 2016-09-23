@@ -6,7 +6,8 @@ if (!defined('WHMCS')) {
 
 include_once dirname(__FILE__) . '/includes/general.php';
 
-function acumulus_add_invoice($vars) {
+function acumulus_add_invoice($vars)
+{
     $vars = array_merge($vars, getAddonVars());
 
     $dataQuery = mysql_query('SELECT tblclients.*, tblinvoices.*, tblpaymentgateways.value AS acumulusBank FROM tblinvoices LEFT JOIN tblclients ON tblclients.id = tblinvoices.userid LEFT JOIN tblpaymentgateways ON tblpaymentgateways.gateway = tblinvoices.paymentmethod AND tblpaymentgateways.setting = "acumulusAccount" WHERE tblinvoices.id = ' . $vars['invoiceid']);
@@ -37,12 +38,12 @@ function acumulus_add_invoice($vars) {
         $vatType = 1;
     } else {
         if (inEurope($dataFetch['country'])) { //If in Europe, then
-			if (!empty($dataFetch['companyname'])) { // Check if customer IS a company
-				$vatType = 3;
-				$taxRate = -1;
-			} else {
-				$vatType = 6;
-			}
+            if (!empty($dataFetch['companyname'])) { // Check if customer IS a company
+                $vatType = 3;
+                $taxRate = -1;
+            } else {
+                $vatType = 6;
+            }
         } else { // If not in Europe, then defaults to outside EU
             $vatType = 4;
             $taxRate = -1;
@@ -105,7 +106,7 @@ function acumulus_add_invoice($vars) {
             'customer' => array(
                 'invoice' => array(
                     'line_credit' => array(
-                        'product' => 'Betaald d.m.v. credit (€ ' .  $dataFetch['credit'] . ')',
+                        'product' => 'Betaald d.m.v. credit (€ ' . $dataFetch['credit'] . ')',
                         'unitprice' => '-' . $price,
                         'vatrate' => $vatrate,
                         'quantity' => 1
@@ -132,7 +133,8 @@ function acumulus_add_invoice($vars) {
     }
 }
 
-function acumulus_inject_gateway($vars) {
+function acumulus_inject_gateway($vars)
+{
     $vars = array_merge($vars, getAddonVars());
 
     if ($vars['filename'] != 'configgateways') {
@@ -149,15 +151,15 @@ function acumulus_inject_gateway($vars) {
         $response['accounts'] = array();
         $response['accounts']['account'] = array();
         $response['accounts']['account'][] = array(
-            'accountid'          => '',
-            'accountnumber'      => 'API errors',
+            'accountid' => '',
+            'accountnumber' => 'API errors',
             'accountdescription' => null
         );
 
         foreach ($api->getErrors() as $error) {
             $response['accounts']['account'][] = array(
-                'accountid'          => '',
-                'accountnumber'      => $error['code'],
+                'accountid' => '',
+                'accountnumber' => $error['code'],
                 'accountdescription' => $error['message']
             );
         }
@@ -182,13 +184,15 @@ function acumulus_inject_gateway($vars) {
     return $inject;
 }
 
-function acumulus_update_client($vars) {
+function acumulus_update_client($vars)
+{
     $vars = array_merge($vars, getAddonVars());
 
     updateCustomer($vars, $vars['userid']);
 }
 
-function acumulus_invoice_controls($vars) {
+function acumulus_invoice_controls($vars)
+{
     if (isset($_GET['acumulus_sync'])) {
 
         acumulus_add_invoice(array('invoiceid' => $vars['invoiceid']));
